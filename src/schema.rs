@@ -22,7 +22,7 @@ diesel::table! {
         name -> Varchar,
         #[max_length = 250]
         email -> Varchar,
-        creted_at -> Timestamp,
+        created_at -> Timestamp,
     }
 }
 

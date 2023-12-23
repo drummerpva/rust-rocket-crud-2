@@ -6,8 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-chrono = "0.4.31"
+chrono = { version = "0.4.31", features = ["serde"] }
 diesel = { version = "2.1.4", features = ["chrono"] }
 diesel-async = { version = "0.4.1", features = ["postgres"] }
 rocket = { version = "0.5.0", features = ["json"] }
 rocket_db_pools = { version = "0.1.0", features = ["diesel_postgres"] }
+serde = "1.0.193"
