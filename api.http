@@ -1,0 +1,5 @@
+###
+@url = localhost:8000
+###
+GET {{url}}/rustaceans
+###
