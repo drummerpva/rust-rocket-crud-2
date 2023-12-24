@@ -1,5 +1,29 @@
 ###
-@url = localhost:8000
+@url = http://localhost:8000
 ###
 GET {{url}}/rustaceans
+###
+@rustacean_id = 1
+###
+GET {{url}}/rustaceans/{{rustacean_id}}
+###
+POST {{url}}/rustaceans
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@doe.com"
+}
+###
+PUT {{url}}/rustaceans/{{rustacean_id}}
+Content-Type: application/json
+
+{
+  "name": "John Doe Alts",
+  "email": "john@doe.alt"
+}
+###
+@rustacean_delete_id = 2
+###
+DELETE {{url}}/rustaceans/{{rustacean_delete_id}}
 ###

@@ -27,9 +27,10 @@ impl RustaceaRepository {
 
     pub async fn update(
         connection: &mut AsyncPgConnection,
-        rustacean: Rustacean,
+        id: i32,
+        rustacean: NewRustacean,
     ) -> QueryResult<Rustacean> {
-        diesel::update(rustaceans::table.find(rustacean.id))
+        diesel::update(rustaceans::table.find(id))
             .set((
                 rustaceans::name.eq(rustacean.name),
                 rustaceans::email.eq(rustacean.email),
