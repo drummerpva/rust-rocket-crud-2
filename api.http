@@ -1,12 +1,15 @@
-###
 @url = http://localhost:8000
 ###
+
 GET {{url}}/rustaceans
 ###
+
 @rustacean_id = 1
 ###
+
 GET {{url}}/rustaceans/{{rustacean_id}}
 ###
+
 POST {{url}}/rustaceans
 Content-Type: application/json
 
@@ -15,6 +18,7 @@ Content-Type: application/json
   "email": "john@doe.com"
 }
 ###
+
 PUT {{url}}/rustaceans/{{rustacean_id}}
 Content-Type: application/json
 
@@ -23,7 +27,49 @@ Content-Type: application/json
   "email": "john@doe.alt"
 }
 ###
+
 @rustacean_delete_id = 2
 ###
+
 DELETE {{url}}/rustaceans/{{rustacean_delete_id}}
 ###
+
+
+#Crates
+###
+
+GET {{url}}/crates
+###
+
+@crate_id = 1
+###
+
+GET {{url}}/crates/{{crate_id}}
+###
+
+POST {{url}}/crates
+Content-Type: application/json
+
+{
+  "rustacean_id": {{rustacean_id}},
+  "code": "Crate code",
+  "name": "Crate name",
+  "version": "Crate version",
+  "description": "Crate description"
+}
+###
+
+PUT {{url}}/crates/{{crate_id}}
+Content-Type: application/json
+
+{
+  "rustacean_id": {{rustacean_id}},
+  "code": "Crate code Updated",
+  "name": "Crate name Updated",
+  "version": "Crate version Updated",
+  "description": "Crate description Updated"
+}
+###
+@crate_delete_id = 2
+###
+DELETE {{url}}/crates/{{crate_delete_id}}

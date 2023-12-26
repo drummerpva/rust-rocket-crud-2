@@ -7,10 +7,7 @@ use rocket::{
 };
 use rocket_db_pools::Connection;
 
-use crate::{
-    models::{NewRustacean, Rustacean},
-    repositories::RustaceaRepository,
-};
+use crate::{models::NewRustacean, repositories::RustaceaRepository};
 
 use super::DbConn;
 

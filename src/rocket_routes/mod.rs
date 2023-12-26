@@ -1,5 +1,6 @@
 use rocket_db_pools::Database;
 
+pub mod crates;
 pub mod rustaceans;
 
 #[derive(Database)]
