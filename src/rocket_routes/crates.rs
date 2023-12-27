@@ -31,10 +31,10 @@ pub async fn get_crate(mut db: Connection<DbConn>, id: i32) -> Result<Value, Cus
 pub async fn create_crate(
     mut db: Connection<DbConn>,
     new_crate: Json<NewCrate>,
-) -> Result<Value, Custom<Value>> {
+) -> Result<Custom<Value>, Custom<Value>> {
     CrateRepository::create(&mut db, new_crate.into_inner())
         .await
-        .map(|register| json!(register))
+        .map(|register| Custom(Status::Created, json!(register)))
         .map_err(|_| Custom(Status::InternalServerError, json!("Error")))
 }
 

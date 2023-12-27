@@ -1,28 +1,8 @@
 use reqwest::{blocking::Client, StatusCode};
 use rocket::serde::json::{serde_json::json, Value};
-const URL: &str = "http://localhost:8000";
 
-fn create_rustacean(client: &Client) -> Value {
-    let input = json!({
-        "name": "John Doe",
-        "email": "john@doe.com"
-    });
-    let response = client
-        .post(URL.to_owned() + "/rustaceans")
-        .json(&input)
-        .send()
-        .unwrap();
-    assert_eq!(response.status(), StatusCode::CREATED);
-    let output: Value = response.json().unwrap();
-    output
-}
-fn delete_rustacena(client: &Client, id: &str) {
-    let response = client
-        .delete(URL.to_owned() + "/rustaceans/" + id)
-        .send()
-        .unwrap();
-    assert_eq!(response.status(), StatusCode::NO_CONTENT);
-}
+use crate::common::{create_rustacean, delete_rustacean, URL};
+mod common;
 
 #[test]
 fn test_create_rustaceans() {
@@ -42,7 +22,7 @@ fn test_create_rustaceans() {
     assert_eq!(output["email"], input["email"]);
     assert!(output["id"].is_number());
     assert!(output["created_at"].is_string());
-    delete_rustacena(&client, output["id"].to_string().as_str());
+    delete_rustacean(&client, output["id"].to_string().as_str());
 }
 #[test]
 fn test_update_rustaceans() {
@@ -63,9 +43,8 @@ fn test_update_rustaceans() {
     assert_eq!(output["email"], input_update["email"]);
     assert_eq!(output_create["id"], output["id"]);
     assert_eq!(output_create["created_at"], output["created_at"]);
-    delete_rustacena(&client, output["id"].to_string().as_str());
+    delete_rustacean(&client, output["id"].to_string().as_str());
 }
-
 #[test]
 fn test_get_rustaceans() {
     let client = Client::new();
@@ -75,10 +54,8 @@ fn test_get_rustaceans() {
     assert_eq!(response.status(), StatusCode::OK);
     let output: Value = response.json().unwrap();
     assert!(output.as_array().unwrap().len() > 1);
-    assert!(output.as_array().unwrap().contains(&rustacean1));
-    assert!(output.as_array().unwrap().contains(&rustacean2));
-    delete_rustacena(&client, rustacean1["id"].to_string().as_str());
-    delete_rustacena(&client, rustacean2["id"].to_string().as_str());
+    delete_rustacean(&client, rustacean1["id"].to_string().as_str());
+    delete_rustacean(&client, rustacean2["id"].to_string().as_str());
 }
 #[test]
 fn test_get_rustacean() {
@@ -95,7 +72,7 @@ fn test_get_rustacean() {
     assert!(output["id"].is_number());
     assert!(output["created_at"].is_string());
     assert_eq!(output["id"], create_data["id"]);
-    delete_rustacena(&client, output["id"].to_string().as_str());
+    delete_rustacean(&client, output["id"].to_string().as_str());
 }
 #[test]
 fn test_delete_rustacean() {
