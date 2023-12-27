@@ -31,10 +31,10 @@ pub async fn get_rustacean(mut db: Connection<DbConn>, id: i32) -> Result<Value,
 pub async fn create_rustacean(
     mut db: Connection<DbConn>,
     new_rustacean: Json<NewRustacean>,
-) -> Result<Value, Custom<Value>> {
+) -> Result<Custom<Value>, Custom<Value>> {
     RustaceaRepository::create(&mut db, new_rustacean.into_inner())
         .await
-        .map(|rustacean| json!(rustacean))
+        .map(|rustacean| Custom(Status::Created, json!(rustacean)))
         .map_err(|_| Custom(Status::InternalServerError, json!("Error")))
 }
 
