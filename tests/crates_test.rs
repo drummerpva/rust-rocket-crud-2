@@ -1,5 +1,5 @@
 use reqwest::{blocking::Client, StatusCode};
-use rocket::serde::json::{serde_json::json, Value};
+use serde_json::{json, Value};
 
 use crate::common::{create_crate, create_rustacean, delete_crate, delete_rustacean, URL};
 mod common;
