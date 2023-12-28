@@ -1,8 +1,8 @@
 use reqwest::{blocking::Client, StatusCode};
 use serde_json::{json, Value};
 
-use crate::common::{create_crate, create_rustacean, delete_crate, delete_rustacean, URL};
 mod common;
+use crate::common::{create_crate, create_rustacean, delete_crate, delete_rustacean, URL};
 
 #[test]
 fn test_create_crate() {
@@ -30,6 +30,69 @@ fn test_create_crate() {
     assert!(output["id"].is_number());
     assert!(output["created_at"].is_string());
     delete_crate(&client, output["id"].to_string().as_str());
+    delete_rustacean(&client, rustacean["id"].to_string().as_str());
+}
+#[test]
+fn test_error_on_update_with_long_code() {
+    let client = Client::new();
+    let rustacean = create_rustacean(&client);
+    let crate_data = create_crate(&client);
+    let input = json!({
+        "rustacean_id": rustacean["id"],
+        "code": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        "name": "test Alt",
+        "version": "0.1.1",
+        "description": "test Alt"
+    });
+    let response = client
+        .put(URL.to_owned() + "/crates/" + crate_data["id"].to_string().as_str())
+        .json(&input)
+        .send()
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    delete_crate(&client, crate_data["id"].to_string().as_str());
+    delete_rustacean(&client, rustacean["id"].to_string().as_str());
+}
+#[test]
+fn test_error_on_update_with_long_version() {
+    let client = Client::new();
+    let rustacean = create_rustacean(&client);
+    let crate_data = create_crate(&client);
+    let input = json!({
+        "rustacean_id": rustacean["id"],
+        "code": "test alt",
+        "name": "test Alt",
+        "version": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        "description": "test Alt"
+    });
+    let response = client
+        .put(URL.to_owned() + "/crates/" + crate_data["id"].to_string().as_str())
+        .json(&input)
+        .send()
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    delete_crate(&client, crate_data["id"].to_string().as_str());
+    delete_rustacean(&client, rustacean["id"].to_string().as_str());
+}
+#[test]
+fn test_error_on_update_with_long_name() {
+    let client = Client::new();
+    let rustacean = create_rustacean(&client);
+    let crate_data = create_crate(&client);
+    let input = json!({
+        "rustacean_id": rustacean["id"],
+        "code": "test alt",
+        "name": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+        "version": "1.1.1",
+        "description": "test Alt"
+    });
+    let response = client
+        .put(URL.to_owned() + "/crates/" + crate_data["id"].to_string().as_str())
+        .json(&input)
+        .send()
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+    delete_crate(&client, crate_data["id"].to_string().as_str());
     delete_rustacean(&client, rustacean["id"].to_string().as_str());
 }
 #[test]
@@ -61,6 +124,24 @@ fn test_update_crate() {
     assert_eq!(output["created_at"], crate_data["created_at"]);
     delete_crate(&client, output["id"].to_string().as_str());
     delete_rustacean(&client, rustacean["id"].to_string().as_str());
+}
+#[test]
+fn test_error_update_crate_on_inexistent_rustacean() {
+    let client = Client::new();
+    let crate_data = create_crate(&client);
+    let input = json!({
+        "rustacean_id": 999999,
+        "code": "test Alt",
+        "name": "test Alt",
+        "version": "0.1.1",
+        "description": "test Alt"
+    });
+    let response = client
+        .put(URL.to_owned() + "/crates/" + crate_data["id"].to_string().as_str())
+        .json(&input)
+        .send()
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
 }
 #[test]
 fn test_view_crates() {

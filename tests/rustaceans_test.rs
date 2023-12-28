@@ -1,8 +1,8 @@
 use reqwest::{blocking::Client, StatusCode};
 use serde_json::{json, Value};
 
-use crate::common::{create_rustacean, delete_rustacean, URL};
 mod common;
+use crate::common::{create_rustacean, delete_rustacean, URL};
 
 #[test]
 fn test_create_rustaceans() {

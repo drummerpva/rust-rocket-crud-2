@@ -1,4 +1,8 @@
+use std::error::Error;
+
+use rocket::{http::Status, response::status::Custom};
 use rocket_db_pools::Database;
+use serde_json::{json, Value};
 
 pub mod crates;
 pub mod rustaceans;
@@ -6,3 +10,8 @@ pub mod rustaceans;
 #[derive(Database)]
 #[database("postgres")]
 pub struct DbConn(rocket_db_pools::diesel::PgPool);
+
+pub fn server_error(e: Box<dyn Error>) -> Custom<Value> {
+    rocket::error!("{}", e);
+    Custom(Status::InternalServerError, json!("Error"))
+}
