@@ -1,5 +1,6 @@
 [package]
 name = "cr8s"
+default-run = "server"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +8,7 @@ edition = "2021"
 
 [dependencies]
 chrono = { version = "0.4.31", features = ["serde"] }
+clap = "4.4.12"
 diesel = { version = "2.1.4", features = ["chrono"] }
 diesel-async = { version = "0.4.1", features = ["postgres"] }
 rocket = { version = "0.5.0", features = ["json"] }

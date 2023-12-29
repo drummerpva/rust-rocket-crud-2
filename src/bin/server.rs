@@ -1,16 +1,12 @@
-use rocket_db_pools::Database;
-use rocket_routes::{
+extern crate cr8s;
+use cr8s::rocket_routes::{
     crates::{create_crate, delete_crate, get_crate, get_crates, update_crate},
     rustaceans::{
         create_rustacean, delete_rustacean, get_rustacean, get_rustaceans, update_rustacean,
     },
     DbConn,
 };
-
-mod models;
-mod repositories;
-mod rocket_routes;
-mod schema;
+use rocket_db_pools::Database;
 
 #[rocket::main]
 async fn main() {
