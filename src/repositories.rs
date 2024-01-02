@@ -91,3 +91,33 @@ impl CrateRepository {
             .await
     }
 }
+
+pub struct UserRepository;
+
+impl UserRepository {
+    pub async fn create(
+        connection: &mut AsyncPgConnection,
+        new_data: NewUser,
+        roles: Vec<String>,
+    ) -> QueryResult<User> {
+        let user = diesel::insert_into(users::table)
+            .values(&new_data)
+            .get_result(connection)
+            .await?;
+        Ok(user)
+    }
+}
+
+pub struct RoleRepository;
+
+impl RoleRepository {
+    pub async fn create(
+        connection: &mut AsyncPgConnection,
+        new_data: NewRole,
+    ) -> QueryResult<Role> {
+        diesel::insert_into(roles::table)
+            .values(&new_data)
+            .get_result(connection)
+            .await
+    }
+}
