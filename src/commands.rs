@@ -23,14 +23,14 @@ impl CommandsServices {
         let user = UserRepository::create(&mut self.connection, new_user, role_codes)
             .await
             .expect("Error on insertin new user");
-        println!("User created {:?}", user);
+        println!("User created {user:?}");
         let roles = RoleRepository::find_by_user(&mut self.connection, &user)
             .await
             .expect("Error on finding roles by user");
-        println!("Roles Assigned {:?}", roles);
+        println!("Roles Assigned {roles:?}");
     }
 
     pub async fn list_users(&mut self) {}
 
-    pub async fn delete_user(&mut self, id: i32) {}
+    pub async fn delete_user(&mut self, _id: i32) {}
 }
