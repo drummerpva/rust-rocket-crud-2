@@ -20,10 +20,14 @@ impl CommandsServices {
         role_codes: Vec<String>,
     ) {
         let new_user = NewUser { username, password };
-        let user = UserRepository::create(&mut self.connection, new_user)
+        let user = UserRepository::create(&mut self.connection, new_user, role_codes)
             .await
             .expect("Error on insertin new user");
         println!("User created {:?}", user);
+        let roles = RoleRepository::find_by_user(&mut self.connection, &user)
+            .await
+            .expect("Error on finding roles by user");
+        println!("Roles Assigned {:?}", roles);
     }
 
     pub async fn list_users(&mut self) {}
