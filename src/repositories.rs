@@ -95,6 +95,19 @@ impl CrateRepository {
 pub struct UserRepository;
 
 impl UserRepository {
+    pub async fn find_with_roles(
+        connection: &mut AsyncPgConnection,
+        id: i32,
+    ) -> QueryResult<Vec<(User, Vec<(UserRole, Role)>)>> {
+        let users_data = users::table.load::<User>(connection).await?;
+        let result = users_roles::table
+            .inner_join(roles::table)
+            .load::<(UserRole, Role)>(connection)
+            .await?
+            .grouped_by(&users_data);
+
+        Ok(users_data.into_iter().zip(result).collect())
+    }
     pub async fn create(
         connection: &mut AsyncPgConnection,
         new_data: NewUser,
