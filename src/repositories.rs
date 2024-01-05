@@ -97,7 +97,6 @@ pub struct UserRepository;
 impl UserRepository {
     pub async fn find_with_roles(
         connection: &mut AsyncPgConnection,
-        id: i32,
     ) -> QueryResult<Vec<(User, Vec<(UserRole, Role)>)>> {
         let users_data = users::table.load::<User>(connection).await?;
         let result = users_roles::table
@@ -145,6 +144,11 @@ impl UserRepository {
                 .expect("Error creating user role at create user repository");
         }
         Ok(user)
+    }
+    pub async fn delete(connection: &mut AsyncPgConnection, id: i32) -> QueryResult<usize> {
+        diesel::delete(users::table.find(id))
+            .execute(connection)
+            .await
     }
 }
 

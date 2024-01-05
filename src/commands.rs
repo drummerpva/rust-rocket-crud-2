@@ -30,7 +30,14 @@ impl CommandsServices {
         println!("Roles Assigned {roles:?}");
     }
 
-    pub async fn list_users(&mut self) {}
+    pub async fn list_users(&mut self) {
+        let users = UserRepository::find_with_roles(&mut self.connection)
+            .await
+            .expect("Error on get users with roles");
+        for user in users {
+            println!("User: {user:?}");
+        }
+    }
 
     pub async fn delete_user(&mut self, _id: i32) {}
 }
