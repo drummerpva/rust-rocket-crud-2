@@ -39,5 +39,10 @@ impl CommandsServices {
         }
     }
 
-    pub async fn delete_user(&mut self, _id: i32) {}
+    pub async fn delete_user(&mut self, id: i32) {
+        UserRepository::delete(&mut self.connection, id)
+            .await
+            .expect("Error on delete user");
+        println!("User deleted");
+    }
 }

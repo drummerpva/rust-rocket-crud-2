@@ -1,4 +1,4 @@
-use clap::{Arg, Command};
+use clap::{value_parser, Arg, Command};
 extern crate cr8s;
 #[tokio::main]
 async fn main() {
@@ -27,7 +27,11 @@ async fn main() {
                     Command::new("delete")
                         .about("Delete user by id")
                         .arg_required_else_help(true)
-                        .arg(Arg::new("id").required(true)),
+                        .arg(
+                            Arg::new("id")
+                                .required(true)
+                                .value_parser(value_parser!(i32)),
+                        ),
                 ),
         )
         .get_matches();
