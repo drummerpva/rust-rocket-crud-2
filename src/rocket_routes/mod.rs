@@ -4,6 +4,7 @@ use rocket::{http::Status, response::status::Custom};
 use rocket_db_pools::Database;
 use serde_json::{json, Value};
 
+pub mod authorization;
 pub mod crates;
 pub mod rustaceans;
 

@@ -1,3 +1,4 @@
+mod auth;
 pub mod commands;
 pub mod db_connection;
 mod models;
