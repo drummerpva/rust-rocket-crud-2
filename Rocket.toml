@@ -1,2 +1,3 @@
 [global.databases]
 postgres = { url = "postgres://postgres:postgres@localhost:5432/app_db" }
+redis = { url = "redis://localhost:6379" }

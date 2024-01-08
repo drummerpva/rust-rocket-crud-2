@@ -5,7 +5,7 @@ use cr8s::rocket_routes::{
     rustaceans::{
         create_rustacean, delete_rustacean, get_rustacean, get_rustaceans, update_rustacean,
     },
-    DbConn,
+    CacheConn, DbConn,
 };
 use rocket_db_pools::Database;
 
@@ -28,6 +28,7 @@ async fn main() {
                 delete_crate
             ],
         )
+        .attach(CacheConn::init())
         .attach(DbConn::init())
         .launch()
         .await;
