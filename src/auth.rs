@@ -1,6 +1,6 @@
 use argon2::{
     password_hash::{rand_core::Error, SaltString},
-    PasswordHash, PasswordHasher, PasswordVerifier,
+    Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
 };
 use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
 use serde::Deserialize;
@@ -13,7 +13,7 @@ pub struct Credentials {
 }
 
 pub fn authorize_user(user: &User, credentials: Credentials) -> Result<String, Error> {
-    let argon = argon2::Argon2::default();
+    let argon = Argon2::default();
     let db_hash = PasswordHash::new(&user.password).unwrap();
     argon
         .verify_password(credentials.password.as_bytes(), &db_hash)
@@ -28,10 +28,11 @@ pub fn authorize_user(user: &User, credentials: Credentials) -> Result<String, E
 
 pub fn hash_password(clean_password: &String) -> String {
     let salt = SaltString::generate(OsRng);
-    let argon = argon2::Argon2::default();
+    let argon = Argon2::default();
     let password_hash = argon
         .hash_password(clean_password.as_bytes(), &salt)
-        .expect("Error on hash password");
+        .expect("Error on hash password")
+        .to_string();
 
-    return password_hash.to_string();
+    return password_hash;
 }
