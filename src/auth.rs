@@ -1,5 +1,8 @@
-use argon2::{password_hash::rand_core::Error, PasswordHash, PasswordVerifier};
-use rand::{distributions::Alphanumeric, Rng};
+use argon2::{
+    password_hash::{rand_core::Error, SaltString},
+    PasswordHash, PasswordHasher, PasswordVerifier,
+};
+use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
 use serde::Deserialize;
 
 use crate::models::User;
@@ -21,4 +24,14 @@ pub fn authorize_user(user: &User, credentials: Credentials) -> Result<String, E
         .map(char::from)
         .collect();
     Ok(session_id)
+}
+
+pub fn hash_password(clean_password: &String) -> String {
+    let salt = SaltString::generate(OsRng);
+    let argon = argon2::Argon2::default();
+    let password_hash = argon
+        .hash_password(clean_password.as_bytes(), &salt)
+        .expect("Error on hash password");
+
+    return password_hash.to_string();
 }

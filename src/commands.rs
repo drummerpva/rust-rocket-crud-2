@@ -1,10 +1,7 @@
-use argon2::{
-    password_hash::{rand_core::OsRng, SaltString},
-    PasswordHasher,
-};
 use diesel_async::AsyncPgConnection;
 
 use crate::{
+    auth::hash_password,
     models::NewUser,
     repositories::{RoleRepository, UserRepository},
 };
@@ -23,14 +20,9 @@ impl CommandsServices {
         password: String,
         role_codes: Vec<String>,
     ) {
-        let salt = SaltString::generate(OsRng);
-        let argon = argon2::Argon2::default();
-        let password_hash = argon
-            .hash_password(password.as_bytes(), &salt)
-            .expect("Error on hash password");
         let new_user = NewUser {
             username,
-            password: password_hash.to_string(),
+            password: hash_password(&password),
         };
         let user = UserRepository::create(&mut self.connection, new_user, role_codes)
             .await
