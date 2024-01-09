@@ -1,12 +1,15 @@
-use reqwest::{blocking::Client, StatusCode};
+use reqwest::StatusCode;
 use serde_json::{json, Value};
 
 mod common;
-use crate::common::{create_crate, create_rustacean, delete_crate, delete_rustacean, URL};
+use crate::common::{
+    create_crate, create_rustacean, delete_crate, delete_rustacean,
+    get_client_with_logged_in_admin, URL,
+};
 
 #[test]
 fn test_create_crate() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let rustacean = create_rustacean(&client);
     let input = json!({
         "rustacean_id": rustacean["id"],
@@ -34,7 +37,7 @@ fn test_create_crate() {
 }
 #[test]
 fn test_error_on_update_with_long_code() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let rustacean = create_rustacean(&client);
     let crate_data = create_crate(&client);
     let input = json!({
@@ -55,7 +58,7 @@ fn test_error_on_update_with_long_code() {
 }
 #[test]
 fn test_error_on_update_with_long_version() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let rustacean = create_rustacean(&client);
     let crate_data = create_crate(&client);
     let input = json!({
@@ -76,7 +79,7 @@ fn test_error_on_update_with_long_version() {
 }
 #[test]
 fn test_error_on_update_with_long_name() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let rustacean = create_rustacean(&client);
     let crate_data = create_crate(&client);
     let input = json!({
@@ -97,7 +100,7 @@ fn test_error_on_update_with_long_name() {
 }
 #[test]
 fn test_update_crate() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let rustacean = create_rustacean(&client);
     let crate_data = create_crate(&client);
     let input = json!({
@@ -127,7 +130,7 @@ fn test_update_crate() {
 }
 #[test]
 fn test_error_update_crate_on_inexistent_rustacean() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let crate_data = create_crate(&client);
     let input = json!({
         "rustacean_id": 999999,
@@ -145,7 +148,7 @@ fn test_error_update_crate_on_inexistent_rustacean() {
 }
 #[test]
 fn test_view_crates() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let crate_data = create_crate(&client);
     let response = client.get(URL.to_owned() + "/crates").send().unwrap();
     let output: Value = response.json().unwrap();
@@ -156,7 +159,7 @@ fn test_view_crates() {
 }
 #[test]
 fn test_get_crate() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let crate_data = create_crate(&client);
     let response = client
         .get(URL.to_owned() + "/crates/" + crate_data["id"].to_string().as_str())
@@ -175,7 +178,7 @@ fn test_get_crate() {
 }
 #[test]
 fn test_delete_crate() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let crate_data = create_crate(&client);
     let response = client
         .delete(URL.to_owned() + "/crates/" + crate_data["id"].to_string().as_str())

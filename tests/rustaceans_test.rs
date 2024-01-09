@@ -1,12 +1,12 @@
-use reqwest::{blocking::Client, StatusCode};
+use reqwest::StatusCode;
 use serde_json::{json, Value};
 
 mod common;
-use crate::common::{create_rustacean, delete_rustacean, URL};
+use crate::common::{create_rustacean, delete_rustacean, get_client_with_logged_in_admin, URL};
 
 #[test]
 fn test_create_rustaceans() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let input = json!({
         "name": "John Doe",
         "email": "john@doe.com"
@@ -26,7 +26,7 @@ fn test_create_rustaceans() {
 }
 #[test]
 fn test_update_rustaceans() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let output_create = create_rustacean(&client);
     let input_update = json!({
         "name": "Jane Doe Alt",
@@ -47,7 +47,7 @@ fn test_update_rustaceans() {
 }
 #[test]
 fn test_get_rustaceans() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let rustacean1 = create_rustacean(&client);
     let rustacean2 = create_rustacean(&client);
     let response = client.get(URL.to_owned() + "/rustaceans").send().unwrap();
@@ -59,7 +59,7 @@ fn test_get_rustaceans() {
 }
 #[test]
 fn test_get_rustacean() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let create_data: Value = create_rustacean(&client);
     let response = client
         .get(URL.to_owned() + "/rustaceans/" + create_data["id"].to_string().as_str())
@@ -76,7 +76,7 @@ fn test_get_rustacean() {
 }
 #[test]
 fn test_delete_rustacean() {
-    let client = Client::new();
+    let client = get_client_with_logged_in_admin();
     let create_data: Value = create_rustacean(&client);
     let response = client
         .delete(URL.to_owned() + "/rustaceans/" + create_data["id"].to_string().as_str())
