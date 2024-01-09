@@ -95,6 +95,9 @@ impl CrateRepository {
 pub struct UserRepository;
 
 impl UserRepository {
+    pub async fn find(connection: &mut AsyncPgConnection, id: i32) -> QueryResult<User> {
+        users::table.find(id).get_result(connection).await
+    }
     pub async fn find_by_username(
         connection: &mut AsyncPgConnection,
         username: &String,
