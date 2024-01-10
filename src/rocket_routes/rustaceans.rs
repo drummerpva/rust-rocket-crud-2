@@ -12,7 +12,7 @@ use crate::{
     repositories::RustaceaRepository,
 };
 
-use super::{server_error, DbConn};
+use super::{server_error, DbConn, EditorUser};
 
 #[get("/rustaceans")]
 pub async fn get_rustaceans(
@@ -41,7 +41,7 @@ pub async fn get_rustacean(
 pub async fn create_rustacean(
     mut db: Connection<DbConn>,
     new_rustacean: Json<NewRustacean>,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<Custom<Value>, Custom<Value>> {
     RustaceaRepository::create(&mut db, new_rustacean.into_inner())
         .await
@@ -54,7 +54,7 @@ pub async fn update_rustacean(
     mut db: Connection<DbConn>,
     id: i32,
     rustacean: Json<NewRustacean>,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<Value, Custom<Value>> {
     RustaceaRepository::find(&mut db, id).await.map_err(|_| {
         Custom(
@@ -72,7 +72,7 @@ pub async fn update_rustacean(
 pub async fn delete_rustacean(
     mut db: Connection<DbConn>,
     id: i32,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<NoContent, Custom<Value>> {
     RustaceaRepository::delete(&mut db, id)
         .await

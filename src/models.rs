@@ -69,7 +69,7 @@ pub struct NewUser {
 #[derive(Queryable, Identifiable, Debug)]
 pub struct Role {
     pub id: i32,
-    pub code: String,
+    pub code: RoleCode,
     pub name: String,
     pub created_at: NaiveDateTime,
 }

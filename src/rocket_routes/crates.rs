@@ -12,7 +12,7 @@ use crate::{
     repositories::CrateRepository,
 };
 
-use super::{server_error, DbConn};
+use super::{server_error, DbConn, EditorUser};
 
 #[get("/crates")]
 pub async fn get_crates(mut db: Connection<DbConn>, _user: User) -> Result<Value, Custom<Value>> {
@@ -38,7 +38,7 @@ pub async fn get_crate(
 pub async fn create_crate(
     mut db: Connection<DbConn>,
     new_crate: Json<NewCrate>,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<Custom<Value>, Custom<Value>> {
     CrateRepository::create(&mut db, new_crate.into_inner())
         .await
@@ -51,7 +51,7 @@ pub async fn update_crate(
     mut db: Connection<DbConn>,
     id: i32,
     create: Json<NewCrate>,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<Value, Custom<Value>> {
     CrateRepository::find(&mut db, id).await.map_err(|_| {
         Custom(
@@ -69,7 +69,7 @@ pub async fn update_crate(
 pub async fn delete_crate(
     mut db: Connection<DbConn>,
     id: i32,
-    _user: User,
+    _user: EditorUser,
 ) -> Result<NoContent, Custom<Value>> {
     CrateRepository::delete(&mut db, id)
         .await
