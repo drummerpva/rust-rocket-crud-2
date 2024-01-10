@@ -1,8 +1,10 @@
+use std::str::FromStr;
+
 use diesel_async::AsyncPgConnection;
 
 use crate::{
     auth::hash_password,
-    models::NewUser,
+    models::{NewUser, RoleCode},
     repositories::{RoleRepository, UserRepository},
 };
 
@@ -24,7 +26,11 @@ impl CommandsServices {
             username,
             password: hash_password(&password),
         };
-        let user = UserRepository::create(&mut self.connection, new_user, role_codes)
+        let role_enums = role_codes
+            .iter()
+            .map(|role_code| RoleCode::from_str(role_code.as_str()).unwrap())
+            .collect();
+        let user = UserRepository::create(&mut self.connection, new_user, role_enums)
             .await
             .expect("Error on insertin new user");
         println!("User created {user:?}");

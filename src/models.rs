@@ -1,5 +1,14 @@
+use std::{io::Write, str::FromStr};
+
 use chrono::NaiveDateTime;
-use diesel::prelude::*;
+use diesel::{
+    deserialize::{FromSql, FromSqlRow},
+    expression::AsExpression,
+    pg::{Pg, PgValue},
+    prelude::*,
+    serialize::{IsNull, Output, ToSql},
+    sql_types::Text,
+};
 use serde::{Deserialize, Serialize};
 
 use crate::schema::*;
@@ -68,7 +77,7 @@ pub struct Role {
 #[derive(Insertable, Deserialize)]
 #[diesel(table_name = roles)]
 pub struct NewRole {
-    pub code: String,
+    pub code: RoleCode,
     pub name: String,
 }
 
@@ -86,4 +95,54 @@ pub struct UserRole {
 pub struct NewUserRole {
     pub user_id: i32,
     pub role_id: i32,
+}
+
+#[derive(AsExpression, Debug, FromSqlRow, Deserialize)]
+#[diesel(sql_type = Text)]
+pub enum RoleCode {
+    Admin,
+    Editor,
+    Viewer,
+}
+
+impl FromStr for RoleCode {
+    type Err = ();
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "admin" => Ok(Self::Admin),
+            "editor" => Ok(Self::Editor),
+            "viewer" => Ok(Self::Viewer),
+            _ => Err(()),
+        }
+    }
+}
+impl ToString for RoleCode {
+    fn to_string(&self) -> String {
+        match self {
+            Self::Admin => "admin".to_string(),
+            Self::Editor => "editor".to_string(),
+            Self::Viewer => "viewer".to_string(),
+        }
+    }
+}
+
+impl FromSql<Text, Pg> for RoleCode {
+    fn from_sql(value: PgValue<'_>) -> diesel::deserialize::Result<Self> {
+        match value.as_bytes() {
+            b"admin" => Ok(Self::Admin),
+            b"editor" => Ok(Self::Editor),
+            b"viewer" => Ok(Self::Viewer),
+            _ => Ok(Self::Viewer),
+        }
+    }
+}
+impl ToSql<Text, Pg> for RoleCode {
+    fn to_sql<'b>(&'b self, out: &mut Output<'b, '_, Pg>) -> diesel::serialize::Result {
+        let _ = match self {
+            Self::Admin => out.write_all(b"admin"),
+            Self::Editor => out.write_all(b"editor"),
+            Self::Viewer => out.write_all(b"viewer"),
+        };
+        Ok(IsNull::No)
+    }
 }
