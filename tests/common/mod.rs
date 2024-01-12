@@ -50,20 +50,26 @@ pub fn delete_crate(client: &Client, id: &str) {
 }
 
 pub fn get_client_with_logged_in_admin() -> Client {
+    get_client_with_logged_in_client("test_admin", "admin")
+}
+pub fn get_client_with_logged_in_viewer() -> Client {
+    get_client_with_logged_in_client("test_only_viewer", "viewer")
+}
+fn get_client_with_logged_in_client(username: &str, role: &str) -> Client {
     let _ = Command::new("cargo")
         .arg("run")
         .arg("--bin")
         .arg("cli")
         .arg("users")
         .arg("create")
-        .arg("test_admin")
+        .arg(username)
         .arg("test")
-        .arg("admin")
+        .arg(role)
         .output()
         .unwrap();
     let client = Client::new();
     let input = json!({
-        "username": "test_admin",
+        "username": username,
         "password": "test"
     });
     let response = client
