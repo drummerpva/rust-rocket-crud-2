@@ -34,6 +34,16 @@ async fn main() {
                         ),
                 ),
         )
+        .subcommand(
+            Command::new("digest-send")
+                .about("Send a digest with latest crates via email")
+                .arg(Arg::new("email").required(true))
+                .arg(
+                    Arg::new("hours_since")
+                        .required(true)
+                        .value_parser(value_parser!(i32)),
+                ),
+        )
         .get_matches();
     let connection = cr8s::db_connection::load_db_connection().await;
     let mut commands_services = cr8s::commands::CommandsServices::new(connection).await;
@@ -66,6 +76,17 @@ async fn main() {
             }
             _ => {}
         },
+        Some(("digest-send", sub_matches)) => {
+            commands_services
+                .digest_send(
+                    sub_matches.get_one::<String>("email").unwrap().to_owned(),
+                    sub_matches
+                        .get_one::<i32>("hours_since")
+                        .unwrap()
+                        .to_owned(),
+                )
+                .await
+        }
         _ => {}
     }
 }

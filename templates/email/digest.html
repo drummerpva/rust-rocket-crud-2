@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digest Email</title>
+</head>
+
+<body>
+  <h1>
+    Daily Digest
+  </h1>
+  <section>
+
+    {% for crate in crates %}
+    <article>
+      <h2>{{ crate.name }} - <code>{{ crate.code }} {{ crate.version }}</code></h2>
+      <p>{{ crate.description }}</p>
+      <small>{{ crate.created_at }}</small>
+    </article>
+    {% endfor %}
+  </section>
+  <footer>
+    <p>&copy; {{ year }} Generated and sent by cr8s rust app</p>
+  </footer>
+</body>
+
+</html>
