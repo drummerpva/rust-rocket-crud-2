@@ -2,15 +2,11 @@ use std::{env, str::FromStr};
 
 use chrono::{Datelike, Utc};
 use diesel_async::AsyncPgConnection;
-use lettre::{
-    message::{header::ContentType, MessageBuilder},
-    transport::smtp::authentication::Credentials,
-    SmtpTransport, Transport,
-};
 use tera::{Context, Tera};
 
 use crate::{
     auth::hash_password,
+    mail::HtmlMailer,
     models::{NewUser, RoleCode},
     repositories::{CrateRepository, RoleRepository, UserRepository},
 };
@@ -78,27 +74,18 @@ impl CommandsServices {
             context.insert("year", &year);
             context.insert("crates", &crates);
 
-            let html_body = tera
-                .render("email/digest.html", &context)
-                .expect("Error on generate digest html");
-            let message = MessageBuilder::new()
-                .subject("Cr8s Digest")
-                .from("Cr8s <noreply@cr8s.com>".parse().unwrap())
-                .to(email.parse().unwrap())
-                .header(ContentType::TEXT_HTML)
-                .body(html_body)
-                .expect("Error on crate message to email with MessageBuidler");
-
             dotenv::dotenv().ok();
             let smtp_host = env::var("SMTP_HOST").expect("SMTP_HOST must be set");
             let smtp_username = env::var("SMTP_USERNAME").expect("SMTP_USERNAME must be set");
             let smtp_password = env::var("SMTP_PASSWORD").expect("SMTP_PASSWORD must be set");
-            let credentials = Credentials::new(smtp_username, smtp_password);
-            let mailer = SmtpTransport::relay(&smtp_host)
-                .expect("Error on create SMTP Transport")
-                .credentials(credentials)
-                .build();
-            mailer.send(&message).expect("Error on send email");
+
+            let mailer = HtmlMailer {
+                template_engine: tera,
+                smtp_host,
+                smtp_username,
+                smtp_password,
+            };
+            mailer.send(email, "email/digest.html", context);
         }
     }
 }
