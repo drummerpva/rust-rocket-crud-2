@@ -85,7 +85,9 @@ impl CommandsServices {
                 smtp_username,
                 smtp_password,
             };
-            mailer.send(email, "email/digest.html", context);
+            mailer
+                .send(email, "email/digest.html", context)
+                .expect("Error on sent email");
         }
     }
 }
