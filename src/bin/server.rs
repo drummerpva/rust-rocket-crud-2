@@ -2,10 +2,11 @@ extern crate cr8s;
 use cr8s::rocket_routes::{
     authorization::login,
     crates::{create_crate, delete_crate, get_crate, get_crates, update_crate},
+    options,
     rustaceans::{
         create_rustacean, delete_rustacean, get_rustacean, get_rustaceans, update_rustacean,
     },
-    CacheConn, DbConn,
+    CacheConn, Cors, DbConn,
 };
 use rocket_db_pools::Database;
 
@@ -15,6 +16,7 @@ async fn main() {
         .mount(
             "/",
             rocket::routes![
+                options,
                 login,
                 get_rustaceans,
                 get_rustacean,
@@ -28,6 +30,7 @@ async fn main() {
                 delete_crate
             ],
         )
+        .attach(Cors)
         .attach(CacheConn::init())
         .attach(DbConn::init())
         .launch()

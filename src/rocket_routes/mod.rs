@@ -1,11 +1,12 @@
 use std::error::Error;
 
 use rocket::{
+    fairing::{Fairing, Info, Kind},
     http::Status,
     outcome::Outcome,
     request::{self, FromRequest},
     response::status::Custom,
-    Request,
+    Request, Response,
 };
 use rocket_db_pools::{deadpool_redis::redis::AsyncCommands, Connection, Database};
 use serde_json::{json, Value};
@@ -65,6 +66,28 @@ impl<'r> FromRequest<'r> for User {
     }
 }
 
+#[rocket::options("/<_route_args..>")]
+pub fn options(_route_args: Option<std::path::PathBuf>) {
+    // Just to add ORS header via the fairing
+}
+
+pub struct Cors;
+
+#[rocket::async_trait]
+impl Fairing for Cors {
+    fn info(&self) -> Info {
+        Info {
+            name: "Append CORS headers in responses",
+            kind: Kind::Response,
+        }
+    }
+    async fn on_response<'r>(&self, _req: &'r Request<'_>, res: &mut Response<'r>) {
+        res.set_raw_header("Access-Control-Allow-Origin", "*");
+        res.set_raw_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        res.set_raw_header("Access-Control-Allow-Headers", "*");
+        res.set_raw_header("Access-Control-Allow-Credentials", "true");
+    }
+}
 pub struct EditorUser(User);
 
 #[rocket::async_trait]
