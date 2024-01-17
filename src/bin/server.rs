@@ -1,6 +1,6 @@
 extern crate cr8s;
 use cr8s::rocket_routes::{
-    authorization::login,
+    authorization::{login, me},
     crates::{create_crate, delete_crate, get_crate, get_crates, update_crate},
     options,
     rustaceans::{
@@ -18,6 +18,7 @@ async fn main() {
             rocket::routes![
                 options,
                 login,
+                me,
                 get_rustaceans,
                 get_rustacean,
                 create_rustacean,

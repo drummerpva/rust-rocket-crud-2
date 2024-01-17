@@ -84,3 +84,14 @@ Content-Type: application/json
   "username": {{username}},
   "password": {{password}}
 }
+###
+@token = Bearer z18FH1cUJNrygeQHtCIniCPkbPinE8fen042imgefU1jglVH3dPASEGRCfygJVz7cECQmIrSYUbAje9Ts9u2ASVLKEg55De715rMgizl3GIGAD6rJls95UfqYFzmSEDl
+###
+GET {{url}}/me
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@doe.com"
+}

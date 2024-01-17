@@ -1,9 +1,10 @@
-use rocket::{http::Status, post, response::status::Custom, serde::json::Json};
+use rocket::{get, http::Status, post, response::status::Custom, serde::json::Json};
 use rocket_db_pools::{deadpool_redis::redis::AsyncCommands, Connection};
 use serde_json::{json, Value};
 
 use crate::{
     auth::{authorize_user, Credentials},
+    models::User,
     repositories::UserRepository,
 };
 
@@ -25,4 +26,9 @@ pub async fn login(
         .await
         .map_err(|e| server_error(e.into()))?;
     Ok(json!({"token": session_id}))
+}
+
+#[get("/me")]
+pub fn me(user: User) -> Value {
+    json!(user)
 }
